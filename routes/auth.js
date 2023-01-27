@@ -4,12 +4,41 @@ var LocalStrategy = require('passport-local');
 var crypto = require('crypto');
 var mongo = require('mongodb');
 var db_url = "mongodb://localhost:27017/"
-var router = express.Router();
+var router = express();
+module.exports = router;
+
+
 
 var client = new mongo.MongoClient(db_url);
 var restaurants_db = client.db("restaurants")
 
 
+passport.use(new LocalStrategy(function verify(username, password, cb) {
+    client.connect()
+    let db = restaurants_db.collection("users")
+
+    let rowOfUserDetails = db.findOne({username: username})
+    rowOfUserDetails.then(function(row){
+
+    console.log(row);
+    
+      crypto.pbkdf2(password, Buffer.from(row.salt), 310000, 32, 'sha256', function(err, hashedPassword) {
+        if (err) { return cb(err); }
+        console.log(Buffer.from(hashedPassword));
+        console.log(Buffer.from(row.hashed_password));
+        console.log(row.hashed_password);
+        if (!crypto.timingSafeEqual(Buffer.from(row.hashed_password), Buffer.from(hashedPassword))) {
+          return cb(null, false, { message: 'Incorrect username or password.' });
+        }
+        return cb(null, row);
+      })
+
+    })
+
+
+    
+
+}));
 
 router.get('/login', function(req, res, next) {
     client.connect() 
@@ -20,53 +49,52 @@ router.get('/login', function(req, res, next) {
         console.log(result);
         client.close()
     })
-    console.log(records);
 
   res.render('login');
 });
 
-module.exports = router;
-
-
-passport.use(new LocalStrategy(function verify(username, password, cb) {
-    client.connect()
-    let db = restaurants_db.collection("users")
-  db.get('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
-    if (err) { return cb(err); }
-    if (!row) { return cb(null, false, { message: 'Incorrect username or password.' }); }
-
-    crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-      if (err) { return cb(err); }
-      if (!crypto.timingSafeEqual(row.hashed_password, hashedPassword)) {
-        return cb(null, false, { message: 'Incorrect username or password.' });
-      }
-      return cb(null, row);
-    });
-  });
+router.post('/login', passport.authenticate('local', {
+  successRedirect: '/signup',
+  failureRedirect: '/login'
 }));
 
+
+
+
 router.get('/signup', function(req, res){
-    
+    res.render('auth/signup') 
 })
 
 router.post('/signup', function(req, res, next) {
-  var salt = crypto.randomBytes(16);
-  crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-    if (err) { return next(err); }
 
+
+  var salt = crypto.randomBytes(16);
+  
+  crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
+    hashedPassword = hashedPassword
+
+    client.connect()
     let db = restaurants_db.collection("users")
 
-    let doc = {username: username, hashed_password: hashedPassword}
-    
-    db.insertOne(doc)
+    let doc = {username: req.body.username, hashed_password: hashedPassword, salt}
 
+    console.log(doc);
     
-    req.login(user, function(err) {
-    if (err) { return next(err); }
-    res.redirect('/');
-    });
+    var insertPromise = db.insertOne(doc)
+
+   
+    insertPromise.then(function(data){
+      console.log(data);
+      var user = {
+          id: data._id,
+          username: req.body.username
+        };
+
+      req.login(user, function(err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+      });
+      })
 
   });
 });
-
-
