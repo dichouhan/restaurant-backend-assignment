@@ -4,15 +4,15 @@
 </br>
 <container>
     <h2>add dish to the listings!</h2>
-<form action="/admin/add_item" method="post">
+<form id="admin-form" action="/admin/add_item" method="post">
     <label>name</label>
     <input type="text" name="name" id="name">
     <label>price</label>
     <input  type="number" name="price" id="price"></br>
     <label>image</label>
     <input  type="text" name="image" id="image"></br>
-    <button value="/admin/add_item">Add</button>
-    <button value="/admin/add_item">Clear</button>
+    <button id="submit-button">Add</button>
+    <button onclick="onUpdateItem()">Clear</button>
 </form>
 
 
@@ -33,11 +33,14 @@
         document.getElementById("name").value = name;
         document.getElementById("price").value = price;
         document.getElementById("image").value = image;
+
+        document.getElementById("submit-button").innerHTML = "update!"
+
+        document.getElementById("admin-form").value = "/admin/add-item/" + itemID
+        console.log(document.getElementById("admin-form").value);
+
     }
 
-    function onUpdateItem(){
-        
-    }
 </script>
 </body>
 </html>

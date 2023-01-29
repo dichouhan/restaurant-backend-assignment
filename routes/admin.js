@@ -39,7 +39,29 @@ router.post("/admin/add_item", function(req, res, next){
     
     client.connect().then(()=>{
         admin_db.insertOne(doc).then((result)=>{
-            console.log(result);
+            admin_db.find().then(function(value){
+                value.toArray().then(function(items){
+                    res.render("/admin/admin", {items: items});
+                })
+            })
         })
     })
+})
+
+
+router.post("/admin/add_item/:itemID", function(req, res, next){
+    let itemID = req.params["itemID"]
+    client.connect().then(()=>{
+
+        // admin_db.find().then(function(value){
+        //     value.toArray().then(function(items){
+        //         res.render("admin/admin", {items: items});
+        //     })
+        // })
+
+        // console.log(itemID);
+
+        res.render("admin/admin", {items: items});
+    })
+
 })
