@@ -7,29 +7,39 @@ module.exports = router;
 
 
 var client = new mongo.MongoClient(db_url);
-var admin_db = client.db("restaurant").collection("admin")
+var admin_db = client.db("restaurants").collection("admin")
 
 
-router.get("/admin", function(req, res){
+
+router.get("/admin", function(req, res, next){
 
     client.connect().then(()=>{
-        let items = admin_db.get({})
-        res.render("admin/admin", {items: items})
+        let cursor = admin_db.find()
+        admin_db.estimatedDocumentCount().then((num)=>{
+            console.log(num);
+            if(num === 0){
+                res.render("admin/admin", {items: []});
+            }else{
+                let items = []
+
+                cursor.toArray().then((items)=>{
+                    res.render("admin/admin", {items: items});
+                })
+            }
+        })
     })
 
-    res.render("admin/admin", {items: []})
 
 })
 
 
-router.post("/admin/add_item", function(req, res){
+router.post("/admin/add_item", function(req, res, next){
 
     let doc = {name: req.body.name, price: req.body.price, image: req.body.image}
     
     client.connect().then(()=>{
         admin_db.insertOne(doc).then((result)=>{
             console.log(result);
-
         })
     })
 })

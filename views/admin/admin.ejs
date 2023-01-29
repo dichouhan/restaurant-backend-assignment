@@ -4,25 +4,40 @@
 </br>
 <container>
     <h2>add dish to the listings!</h2>
-<form action="" method="post">
+<form action="/admin/add_item" method="post">
     <label>name</label>
-    <input type="text" name="name">
+    <input type="text" name="name" id="name">
     <label>price</label>
-    <input  type="number" name="price"></br>
+    <input  type="number" name="price" id="price"></br>
     <label>image</label>
-    <input  type="image" name="image"></br>
-    <button type="submit"  value="admin/add_item">Add</button>
+    <input  type="text" name="image" id="image"></br>
+    <button value="/admin/add_item">Add</button>
+    <button value="/admin/add_item">Clear</button>
 </form>
+
 
 </container>
 <div>
-    <% for item of (items){%>
-        <ul>
-            <container>
+    <% items.forEach(function(item){ %>
+        <ul onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
+            <img src=<%= item.image %> >
             <h1><%= item.name %> </h1>
-            </container>
+            <h3> ₹ <%=  item.price %> </h3>
+            <button>delete</button>
             </ul>
-    <% } %> 
+    <% }) %> 
 </div>
+<script>
+    function onItemClick(itemID, name, price, image){
+
+        document.getElementById("name").value = name;
+        document.getElementById("price").value = price;
+        document.getElementById("image").value = image;
+    }
+
+    function onUpdateItem(){
+        
+    }
+</script>
 </body>
 </html>
