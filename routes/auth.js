@@ -10,7 +10,6 @@ module.exports = router;
 
 var client = new mongo.MongoClient(db_url);
 var restaurants_db = client.db("restaurants")
-client.connect()
 
 passport.use(new LocalStrategy(function verify(username, password, cb) {
     client.connect()

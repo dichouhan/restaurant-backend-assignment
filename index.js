@@ -23,7 +23,11 @@ app.use(passport.authenticate('session'));
 
 var authRouter = require('./routes/auth');
 
+var adminRouter = require('./routes/admin')
+
+
 app.use('/', authRouter)
+app.use('/', adminRouter)
 
 
 app.get('/', function(req, res) {

@@ -1,0 +1,28 @@
+<%- include('../header'); %>
+<body>
+<h1>Admin Dashboard</h1>
+</br>
+<container>
+    <h2>add dish to the listings!</h2>
+<form action="" method="post">
+    <label>name</label>
+    <input type="text" name="name">
+    <label>price</label>
+    <input  type="number" name="price"></br>
+    <label>image</label>
+    <input  type="image" name="image"></br>
+    <button type="submit"  value="admin/add_item">Add</button>
+</form>
+
+</container>
+<div>
+    <% for item of (items){%>
+        <ul>
+            <container>
+            <h1><%= item.name %> </h1>
+            </container>
+            </ul>
+    <% } %> 
+</div>
+</body>
+</html>
