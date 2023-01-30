@@ -65,15 +65,8 @@ router.post("/admin/add_item/:itemID", function(req, res, next){
         const options = { upsert: true };
 
         admin_db.updateOne({_id: itemID}, updateDoc, options).then((result)=>{
-            admin_db.find().toArray().then(function(items){
-                console.log(items);
-                res.render("admin/admin", {items: items});
-            })
-
-            console.log(itemID);
             req.flash("update success!")
-            // res.render("admin/admin", {items: items});
-
+            res.redirect("/admin");
         })
 
     })

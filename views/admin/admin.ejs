@@ -1,25 +1,27 @@
 <%- include('../header'); %>
 <body>
+    <container class="jumbotron">
+
 <h1>Admin Dashboard</h1>
-</br>
-<container>
     <h2>add dish to the listings!</h2>
-<form id="admin-form" action="/admin/add_item" method="post">
+    </container>
+</br>
+
+<form class="container-fluid" id="admin-form" action="/admin/add_item" method="post">
     <label>name</label>
     <input type="text" name="name" id="name">
     <label>price</label>
     <input  type="number" name="price" id="price"></br>
     <label>image</label>
     <input  type="text" name="image" id="image"></br>
-    <button id="submit-button">Add</button>
-    <button onclick="onUpdateItem()">Clear</button>
+    <button class="btn-success" id="submit-button">Add</button>
+    <button class="btn-warning" onclick="onUpdateItem()">Clear</button>
 </form>
 
 
-</container>
 <div>
     <% items.forEach(function(item){ %>
-        <ul onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
+        <ul class="img-thumbnail" onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
             <img src=<%= item.image %> >
             <h1><%= item.name %> </h1>
             <h3> ₹ <%=  item.price %> </h3>
@@ -50,7 +52,6 @@
             type: "DELETE",
             data: "id=" + itemID,
             success: function(){
-                
                 window.location.reload();
             }
         });
