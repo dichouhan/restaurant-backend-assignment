@@ -1,0 +1,65 @@
+<%- include('../header'); %>
+<body>
+    <container class="jumbotron">
+
+<h1>Admin Dashboard</h1>
+    <h2>add dish to the listings!</h2>
+    </container>
+</br>
+
+<form class="container-fluid" id="admin-form" action="/admin/add_item" method="post">
+    <label>name</label>
+    <input type="text" name="name" id="name">
+    <label>price</label>
+    <input  type="number" name="price" id="price"></br>
+    <label>image</label>
+    <input  type="text" name="image" id="image"></br>
+    <button class="btn-success" id="submit-button">Add</button>
+    <button class="btn-warning" onclick="onUpdateItem()">Clear</button>
+</form>
+
+
+<div>
+    <% items.forEach(function(item){ %>
+        <ul class="img-thumbnail" onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
+            <img src=<%= item.image %> >
+            <h1><%= item.name %> </h1>
+            <h3> ₹ <%=  item.price %> </h3>
+                <button class="delete-button" onclick="onDeleteItem('<%- item._id %>', event)" id="<%- item._id %>"  >delete</button>
+            </ul>
+    <% }) %> 
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    function onItemClick(itemID, name, price, image){
+
+        document.getElementById("name").value = name;
+        document.getElementById("price").value = price;
+        document.getElementById("image").value = image;
+
+        document.getElementById("submit-button").innerHTML = "update!"
+
+        document.getElementById("admin-form").value = "/admin/add-item/" + itemID
+        console.log(document.getElementById("admin-form").value);
+
+    }
+
+    function onDeleteItem(itemID, event){
+       console.log(event + " - event"); 
+
+        $.ajax({
+            url: "/admin/delete",
+            type: "DELETE",
+            data: "id=" + itemID,
+            success: function(){
+                window.location.reload();
+            }
+        });
+
+        event.stopPropagation();
+    }
+
+
+</script>
+</body>
+</html>

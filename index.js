@@ -4,17 +4,37 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json())
 app.set('view engine', 'ejs')
 
+var passport = require('passport');
+var session = require('express-session');
+var SQLiteStore = require('connect-sqlite3')(session);
+
+
+app.use(session({
+  secret: 'islit!',
+  resave: false,
+  saveUninitialized: false,
+  store: new SQLiteStore({ db: 'sessions.db', dir: './session/db' })
+}));
+
+
+app.use(passport.authenticate('session'));
+
+
 
 var authRouter = require('./routes/auth');
 
+var adminRouter = require('./routes/admin')
+
+
 app.use('/', authRouter)
+app.use('/', adminRouter)
 
 
 app.get('/', function(req, res) {
   var users = ["a", "b", "c", "d"]
   var temp = 2
   res.render('test', {users: users, temp: temp })
-
+  
 });
 
 
