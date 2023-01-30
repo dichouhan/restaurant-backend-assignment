@@ -23,10 +23,11 @@
             <img src=<%= item.image %> >
             <h1><%= item.name %> </h1>
             <h3> ₹ <%=  item.price %> </h3>
-            <button>delete</button>
+                <button class="delete-button" onclick="onDeleteItem('<%- item._id %>', event)" id="<%- item._id %>"  >delete</button>
             </ul>
     <% }) %> 
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     function onItemClick(itemID, name, price, image){
 
@@ -40,6 +41,23 @@
         console.log(document.getElementById("admin-form").value);
 
     }
+
+    function onDeleteItem(itemID, event){
+       console.log(event + " - event"); 
+
+        $.ajax({
+            url: "/admin/delete",
+            type: "DELETE",
+            data: "id=" + itemID,
+            success: function(){
+                
+                window.location.reload();
+            }
+        });
+
+        event.stopPropagation();
+    }
+
 
 </script>
 </body>
