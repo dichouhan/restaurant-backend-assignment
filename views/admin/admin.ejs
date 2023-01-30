@@ -18,7 +18,6 @@
     <button class="btn-warning" onclick="onUpdateItem()">Clear</button>
 </form>
 
-
 <div>
     <% items.forEach(function(item){ %>
         <ul class="img-thumbnail" onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
@@ -36,9 +35,7 @@
         document.getElementById("name").value = name;
         document.getElementById("price").value = price;
         document.getElementById("image").value = image;
-
         document.getElementById("submit-button").innerHTML = "update!"
-
         document.getElementById("admin-form").value = "/admin/add-item/" + itemID
         console.log(document.getElementById("admin-form").value);
 
@@ -58,7 +55,6 @@
 
         event.stopPropagation();
     }
-
 
 </script>
 </body>

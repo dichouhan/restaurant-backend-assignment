@@ -8,6 +8,7 @@ var passport = require('passport');
 var session = require('express-session');
 var SQLiteStore = require('connect-sqlite3')(session);
 
+var client = ""
 
 app.use(session({
   secret: 'islit!',
@@ -16,16 +17,13 @@ app.use(session({
   store: new SQLiteStore({ db: 'sessions.db', dir: './session/db' })
 }));
 
-
 app.use(passport.authenticate('session'));
 
-
-
 var authRouter = require('./routes/auth');
-
 var adminRouter = require('./routes/admin')
+var userRouter = require('./routes/user')
 
-
+app.use('/', userRouter)
 app.use('/', authRouter)
 app.use('/', adminRouter)
 
