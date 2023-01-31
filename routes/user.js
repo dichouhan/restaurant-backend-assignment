@@ -184,6 +184,14 @@ router.get("/orders", (req, res, next)=>{
 
     ps.getUserIdFromCookie(req, (userID)=>{
 
+        getAllOrders(userID).then((orders)=>{
+            res.render("user/orders", {orders: orders})
+        }).catch((reason)=>{
+            console.log(reason);
+            res.statusCode = 400;
+            res.send("something went wrong!")
+
+        })
 
     })
 
@@ -193,8 +201,25 @@ router.get("/orders", (req, res, next)=>{
 async function getAllOrders(userID){
     await client.connect();
 
-    let orders =  await orders_db.find({user_id: userID}) 
-    
-    
-    
+    let orders =  await orders_db.find({user_id: userID}).toArray()
+
+    res_orders = []
+
+    orders.forEach((order)=>{
+        
+        let doc = {}
+        doc.amount = orders.total_amount
+        order_name_join = ""
+        order.cart.items.forEach((key)=>{
+            let total_price = order.cart.items[key].quantity*order.cart.items[key].product.name.price
+            order_name_join += order.cart.items[key].product.name + " quantity: " + order.cart.items[key].quantity + " total price" + total_price + "\n\n\n";
+        })
+        doc["order_name"] = order_name_join
+        res_orders.push(doc)
+
+/*
+{"amount": 3333, "order_name": <order_name>}
+*/
+    })
+    return res_orders
 }
