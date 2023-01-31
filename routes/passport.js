@@ -50,11 +50,23 @@ var cookieExtractor = function(req) {
     var token = null;
     if (req && req.cookies) {
         token = req.cookies['auth'];
-    console.log(token + "-token here!");
     }
     return token;
 };
 
+function parseJwt (token) {
+  console.log(token);
+    return Buffer.from(token.split('.')[1], 'base64').toString();
+}
+
+function getUserIdFromCookie(req, cb){
+    const token = cookieExtractor(req)
+      console.log(token + "token here");
+      return cb(parseJwt(token))
+
+ }
+
+ 
 
 
 passport.use(new JWTStrategy({
@@ -89,4 +101,4 @@ passport.use(new JWTStrategy({
 
 
 
-module.exports = passport;
+module.exports = {passport, getUserIdFromCookie};

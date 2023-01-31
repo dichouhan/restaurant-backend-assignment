@@ -23,8 +23,7 @@ var authRouter = require('./routes/auth');
 var adminRouter = require('./routes/admin')
 var userRouter = require('./routes/user')
 
-const passportVerify = require("./routes/passport").authenticate("jwt", {session: false});
-
+const passportVerify = require("./routes/passport").passport.authenticate("jwt", {session: false});
 
 
 app.use('/home', userRouter)

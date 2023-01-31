@@ -3,7 +3,7 @@ const express = require('express');
 var mongo = require('mongodb');
 const db_url = "mongodb://127.0.0.1:27017/"
 const jwt = require('jsonwebtoken');
-const passport = require("./passport");
+const passport = require("./passport").passport;
 const router = express();
 var crypto = require('crypto');
 
@@ -38,15 +38,10 @@ router.post('/login', function(req, res, next){
     if(err || !user){
       return res.status(400).send({message : "something went wrong!"})
     }
-  
-    req.login(user, {session: false}, (err)=>{
-      if(err){
-        return res.send(err)
-      }
       const token = jwt.sign(user._id.toString(), 'islit!');
       res.cookie("auth", token)
           return res.json({token});
-    });
+
   })(req, res)
 
 });
