@@ -95,6 +95,16 @@ router.put("/cart", function(req, res, next){
 })
 
 
+router.delete("/cart", (req, res, next){
+    ps.getUserIdFromCookie(req, function(userID){
+        client.connect().then(()=>{
+            cart_db.findOne({user_id: userID}).then((cart_item)=>{
+                cart
+            })
+        })
+    })
+})
+
 
 async function updateCart(user_id, product_id, qty){
 
@@ -190,7 +200,6 @@ router.get("/orders", (req, res, next)=>{
             console.log(reason);
             res.statusCode = 400;
             res.send("something went wrong!")
-
         })
 
     })
@@ -208,18 +217,25 @@ async function getAllOrders(userID){
     orders.forEach((order)=>{
         
         let doc = {}
-        doc.amount = orders.total_amount
         order_name_join = ""
-        order.cart.items.forEach((key)=>{
-            let total_price = order.cart.items[key].quantity*order.cart.items[key].product.name.price
-            order_name_join += order.cart.items[key].product.name + " quantity: " + order.cart.items[key].quantity + " total price" + total_price + "\n\n\n";
+        let _amount = 0
+        Object.keys(order.cart.items).forEach((key)=>{
+            let total_price = order.cart.items[key].quantity*order.cart.items[key].product.price
+            _amount += total_price
+            order_name_join += order.cart.items[key].product.name + " quantity: " + order.cart.items[key].quantity + " total price - " + total_price + "</br>";
         })
+
+        doc["amount"] = _amount
+        
         doc["order_name"] = order_name_join
+
+        doc["order_id"] = order._id
         res_orders.push(doc)
 
 /*
-{"amount": 3333, "order_name": <order_name>}
+{"amount": 3333, "order_name": <order_name>, "order_id": 338241758123}
 */
     })
+    console.log(res_orders);
     return res_orders
 }

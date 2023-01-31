@@ -40,7 +40,7 @@ router.post('/login', function(req, res, next){
     }
       const token = jwt.sign(user._id.toString(), 'islit!');
       res.cookie("auth", token)
-          return res.json({token});
+          res.redirect("/home")
 
   })(req, res)
 
