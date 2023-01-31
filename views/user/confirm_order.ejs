@@ -1,0 +1,12 @@
+<%- include('../header'); %>
+<body>
+<h1>Order Confirmation!</h1>
+</br>
+
+<h2>Payable Amount: <%-amount%></h2>
+<form method="post" action="/home/confirm_order?cart_id=<%-cart_id%>&amount=<%=amount%>">
+    <button>Confirm!</button>
+</form>
+
+</body>
+</html>

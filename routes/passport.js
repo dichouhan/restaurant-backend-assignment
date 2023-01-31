@@ -6,7 +6,10 @@ const ExtractJWT = passportJWT.ExtractJwt;
 var mongo = require('mongodb');
 var db_url = "mongodb://127.0.0.1:27017/"
 let LocalStrategy = require('passport-local');
+const { appendFile } = require("fs");
 var client = new mongo.MongoClient(db_url);
+
+
 
 
 var restaurants_db = client.db("restaurants")
