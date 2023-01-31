@@ -1,7 +1,7 @@
 
 const express = require('express');
 var mongo = require('mongodb');
-var db_url = "mongodb://127.0.0.1:27017/"
+var db_url = process.env.MONGO;
 const router = express();
 module.exports = router;
 var flash = require('connect-flash');

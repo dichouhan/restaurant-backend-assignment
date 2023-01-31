@@ -4,7 +4,7 @@ const ps = require('./passport');
 var mongo = require('mongodb');
 const { route, render } = require('./auth');
 
-var db_url = "mongodb://127.0.0.1:27017/"
+var db_url = process.env.MONGO;
 const router = express.Router();
 
 const passportVerify = ps.passport.authenticate("jwt", {session: false});
@@ -90,7 +90,6 @@ router.put("/cart", function(req, res, next){
                 res.statusCode = 400;
                 res.send("something went wrong!")
             })
-
     })
 })
 

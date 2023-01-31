@@ -1,7 +1,7 @@
 const express = require('express');
 // const passport = require('passport');
 var mongo = require('mongodb');
-const db_url = "mongodb://127.0.0.1:27017/"
+const db_url = process.env.MONGO;
 const jwt = require('jsonwebtoken');
 const passport = require("./passport").passport;
 const router = express();
