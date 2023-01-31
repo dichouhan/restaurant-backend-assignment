@@ -1,20 +1,20 @@
 
-var express = require('express');
+const express = require('express');
 var mongo = require('mongodb');
 var db_url = "mongodb://127.0.0.1:27017/"
-var router = express();
+const router = express();
 module.exports = router;
 var flash = require('connect-flash');
 
 
-var client = new mongo.MongoClient(db_url);
-var admin_db = client.db("restaurants").collection("admin")
+const client = new mongo.MongoClient(db_url);
+const admin_db = client.db("restaurants").collection("admin")
 
 router.use(flash())
 
 
 
-router.get("/admin", function(req, res, next){
+router.get("/", function(req, res, next){
 
     client.connect().then(()=>{
         let cursor = admin_db.find()
@@ -36,20 +36,19 @@ router.get("/admin", function(req, res, next){
 })
 
 
-router.post("/admin/add_item", function(req, res, next){
+router.post("/add_item", function(req, res, next){
 
     let doc = {name: req.body.name, price: req.body.price, image: req.body.image}
     
     client.connect().then(()=>{
         admin_db.insertOne(doc).then((result)=>{
-            req.flash("message", "added item!");
             res.redirect("/admin");
         })
     })
 })
 
 
-router.post("/admin/add_item/:itemID", function(req, res, next){
+router.post("/add_item/:itemID", function(req, res, next){
     let itemID = req.params.itemID
 
     client.connect().then(()=>{
@@ -65,7 +64,6 @@ router.post("/admin/add_item/:itemID", function(req, res, next){
         const options = { upsert: true };
 
         admin_db.updateOne({_id: itemID}, updateDoc, options).then((result)=>{
-            req.flash("update success!")
             res.redirect("/admin");
         })
 
@@ -73,7 +71,7 @@ router.post("/admin/add_item/:itemID", function(req, res, next){
 
 })
 
-router.delete("/admin/delete", function(req, res, next){
+router.delete("/delete", function(req, res, next){
     let itemID = req.body.id
     console.log(itemID);
     client.connect().then(()=>{

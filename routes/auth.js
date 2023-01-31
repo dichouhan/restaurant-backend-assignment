@@ -1,38 +1,18 @@
-var express = require('express');
-var passport = require('passport');
-var LocalStrategy = require('passport-local');
-var crypto = require('crypto');
+const express = require('express');
+// const passport = require('passport');
 var mongo = require('mongodb');
-var db_url = "mongodb://127.0.0.1:27017/"
-var router = express();
-module.exports = router;
+const db_url = "mongodb://127.0.0.1:27017/"
+const jwt = require('jsonwebtoken');
+const passport = require("./passport");
+const router = express();
+var crypto = require('crypto');
+
+// https://medium.com/front-end-weekly/learn-using-jwt-with-passport-authentication-9761539c4314
 
 
 var client = new mongo.MongoClient(db_url);
 var restaurants_db = client.db("restaurants")
 
-passport.use(new LocalStrategy(function verify(username, password, cb) {
-    client.connect()
-    let db = restaurants_db.collection("users")
-
-    let rowOfUserDetails = db.findOne({username: username})
-    rowOfUserDetails.then(function(row){
-
-      crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-
-        if (err) { return cb(err); }
-
-        let hashed_password = row.hashed_password
-        
-        if (!crypto.timingSafeEqual(Buffer.from(hashed_password, 'hex'), Buffer.from(hashedPassword, 'hex'))) {
-          return cb(null, false, { message: 'Incorrect username or password.' });
-        }
-        return cb(null, row);
-      })
-
-    })
-
-}));
 
 
 passport.serializeUser(function(user, cb) {
@@ -52,10 +32,24 @@ router.get('/login', function(req, res, next) {
   res.render('login');
 });
 
-router.post('/login', passport.authenticate('local', {
-  successRedirect: '/signup',
-  failureRedirect: '/login'
-}));
+router.post('/login', function(req, res, next){
+
+  passport.authenticate('local', {session: false}, function(err, user, info){
+    if(err || !user){
+      return res.status(400).send({message : "something went wrong!"})
+    }
+  
+    req.login(user, {session: false}, (err)=>{
+      if(err){
+        return res.send(err)
+      }
+      const token = jwt.sign(user._id.toString(), 'islit!');
+      res.cookie("auth", token)
+          return res.json({token});
+    });
+  })(req, res)
+
+});
 
 
 router.get('/signup', function(req, res){
@@ -87,14 +81,16 @@ router.post('/signup', function(req, res, next) {
           username: req.body.username
         };
 
-      req.login(user, function(err) {
-      if (err) {
-        console.log(err);
-         return next(err); }
+      // req.login(user, function(err) {
+      // if (err) {
+      //   console.log(err);
+      //    return next(err); }
 
         res.redirect('/login?registered=true');
+      // });
+      // })
       });
-      })
-
   });
 });
+
+module.exports = router;
