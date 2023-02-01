@@ -2,7 +2,6 @@
 const express = require('express');
 const ps = require('./passport');
 var mongo = require('mongodb');
-const { route, render } = require('./auth');
 
 var db_url = process.env.MONGO;
 const router = express.Router();
@@ -67,9 +66,6 @@ async function getCart(userID, res){
         totalAmount += _amount
         productObjs.push(obj.product)
     })
-    // console.log(productObjs);
-    // console.log(totalAmount);
-    // res.send("sss")
     res.render("user/cart", {items: productObjs, amount: totalAmount, quantity: priceDetailsObjs})
 
 }
@@ -94,12 +90,27 @@ router.put("/cart", function(req, res, next){
 })
 
 
-router.delete("/cart", (req, res, next){
+router.delete("/cart", (req, res, next)=>{
     ps.getUserIdFromCookie(req, function(userID){
         client.connect().then(()=>{
-            cart_db.findOne({user_id: userID}).then((cart_item)=>{
-                cart
+
+            let item_id = req.body.item_id
+
+            cart_db.updateOne({user_id: userID}, {
+                $unset: {["items." + item_id]: null}
+            }).then((result)=>{
+                console.log(result);
+
+                res.statusCode = 202
+                res.send("deleted!")
+            }).catch((reason)=>{
+                console.log(reason);
+
+                res.status = 400;
+                res.send("something went wrong!")
             })
+
+
         })
     })
 })
@@ -158,7 +169,7 @@ router.post("/confirm_order", (req, res, next)=>{
     ps.getUserIdFromCookie(req, function(userID){
         createOrder(userID, req.query.cart_id).then(()=>{
             res.status = 204
-            res.redirect("/orders")
+            res.redirect("/home/orders")
         }).catch((reason)=>{
             console.log(reason);
             res.statusCode = 400;

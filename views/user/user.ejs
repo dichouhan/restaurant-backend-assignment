@@ -7,6 +7,7 @@
 <nav>
     <a href="/home/cart"><h3>Cart</h3></a>
     <a href="/home/orders"><h3>Orders</h3></a>
+    <a onclick="logout()">Log Out</a>
 </nav>
 
     <h3>browse through the curated list of your favourite items!</h3>
@@ -16,7 +17,7 @@
 
 <div>
     <% items.forEach(function(item){ %>
-        <ul class="img-thumbnail" onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
+        <ul class="img-thumbnail" >
             <img src=<%= item.image %> >
             <h1><%= item.name %> </h1>
             <h3> ₹ <%=  item.price %> </h3>
@@ -35,10 +36,17 @@
             type: "PUT",
             data: {"product_id": itemID, "quantity": quantity},
             success: function(){
+                window.alert("Item added to the cart!")
                 window.location.reload();
             }
         });
      
+    }
+
+    function logout() {
+        document.cookie = 'auth=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+        window.location.href = "/login";
     }
 
 </script>

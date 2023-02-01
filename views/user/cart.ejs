@@ -13,7 +13,7 @@
 
 <div>
     <% items.forEach(function(item){ %>
-        <ul class="img-thumbnail" onclick="onItemClick('<%-item._id %>', '<%- item.name %>', '<%- item.price %>', '<%- item.image %>')">
+        <ul class="img-thumbnail" >
             <img src=<%= item.image %> >
             <h1><%= item.name %> </h1>
             <h3> ₹ <%=  item.price %> </h3>
@@ -22,27 +22,32 @@
             <h3>
                 <%- quantity[item._id].total_price %>
             </h3>
-            <button class="delete-button" onclick="onDeleteItem('<%- item._id %>')" id="<%- item._id %>"  >Delete</button>
+            <button class="delete-button" onclick="onItemClick('<%- item._id %>')" id="<%- item._id %>"  >Delete</button>
             </ul>
     <% }) %> 
 </div>
 
-<div>
-    <h1>Amount : </h1> <h2><%- amount %></h2>
-</div>
 
 <form method="get" action="/home/confirm_order">
       <input type="hidden" name="amount" value="<%= amount %>" /> 
-    <button>Checkout</button>
+      
+      <% if(amount > 0){ %>
+        <div>
+            <h1>Amount : </h1> <h2><%- amount %></h2>
+        </div>
+        <button>Checkout</button>
+      <%}else{%>
+        <i>"Your Cart Is Empty, Add Some Items To It."</i>
+      <%}%>
 </form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-    function onItemClick(itemID, name, price, image){
+    function onItemClick(itemID){
         
         $.ajax({
             url: "/home/cart",
             type: "DELETE",
-            data: "?item_id=" + itemID,
+            data: {"item_id": itemID},
             success: function(){
                 window.location.reload();
             }

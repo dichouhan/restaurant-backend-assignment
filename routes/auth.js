@@ -29,7 +29,7 @@ passport.deserializeUser(function(user, cb) {
 
 
 router.get('/login', function(req, res, next) {
-  res.render('login');
+  res.render('auth/login');
 });
 
 router.post('/login', function(req, res, next){

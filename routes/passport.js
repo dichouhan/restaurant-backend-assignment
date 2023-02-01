@@ -10,8 +10,6 @@ const { appendFile } = require("fs");
 var client = new mongo.MongoClient(db_url);
 
 
-
-
 var restaurants_db = client.db("restaurants")
 
 let db = restaurants_db.collection("users")
