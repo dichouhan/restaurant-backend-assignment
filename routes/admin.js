@@ -3,16 +3,47 @@ const express = require('express');
 var mongo = require('mongodb');
 var db_url = process.env.MONGO;
 const router = express();
-module.exports = router;
-var flash = require('connect-flash');
-
 
 const client = new mongo.MongoClient(db_url);
 const admin_db = client.db("restaurants").collection("admin")
 const orders_db = client.db("restaurants").collection("orders")
+const users_db = client.db("restaurants").collection("users")
 
-router.use(flash())
+const ps = require("./passport");
 
+
+const admin_auth_middleware = function(req, res, next){
+    ps.getUserIdFromCookie(req, (userID)=>{
+
+    getUser(userID).then((user)=>{
+       if(!user){
+            res.status = 403;
+            res.send("unauthorized")
+       }else{
+            next()
+       }
+    }).catch((reason)=>{
+        console.log(reason);
+        res.status = 400;
+        res.send("something went wrong!")
+        
+    }
+    )
+    })
+
+}
+
+router.use(admin_auth_middleware);
+
+async function getUser(userID){
+    
+    await client.connect();
+    console.log(userID);
+    const user = await users_db.findOne({_id: mongo.ObjectId(userID), role: "admin"});
+    console.log(user + "user here");
+    return user
+    
+}
 
 
 router.get("/", function(req, res, next){
@@ -133,3 +164,5 @@ async function getSales(){
 
     return res_orders
 }
+
+module.exports = router;

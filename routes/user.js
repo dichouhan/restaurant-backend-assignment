@@ -46,13 +46,23 @@ router.get("/cart", function(req, res, next){
 async function getCart(userID, res){
 
     await client.connect();
-    let cartDoc = await cart_db.findOne({user_id: userID}).catch((reason)=>{
+    var cartDoc = await cart_db.findOne({user_id: userID}).catch((reason)=>{
         res.statusCode = 400;
         res.send("something went wrong")
         return
     })
 
-    let items = cartDoc.items;
+    if(cartDoc === null){
+        await cart_db.insertOne({user_id: userID, items: {}})
+
+        cartDoc = await cart_db.findOne({user_id: userID}).catch((reason)=>{
+            res.statusCode = 400;
+            res.send("something went wrong")
+            return
+        })
+    }
+
+    let items = cartDoc ? cartDoc.items: {};
 
     let prodIds = Object.keys(items);
     var totalAmount = 0
@@ -76,7 +86,6 @@ router.put("/cart", function(req, res, next){
         console.log(req.body);
         const productID = req.body.product_id
         const qty = req.body.quantity
-
         
             updateCart(userID, productID, qty).then(()=>{
                 res.statusCode = 204;

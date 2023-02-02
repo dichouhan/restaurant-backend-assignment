@@ -58,12 +58,14 @@ router.post('/signup', function(req, res, next) {
   
   crypto.pbkdf2(req.body.password, salt.toString('hex'), 310000, 32, 'sha256', function(err, hashedPassword) {
 
+    console.log(req.body);
+
     console.log(hashedPassword.length);
     console.log(hashedPassword);
     client.connect()
     let db = restaurants_db.collection("users")
 
-    let doc = {username: req.body.username, hashed_password: hashedPassword.toString('hex'), salt: salt.toString('hex')}
+    let doc = {username: req.body.username, hashed_password: hashedPassword.toString('hex'), salt: salt.toString('hex'), role: req.body.role}
 
     console.log(doc);
     
