@@ -1,12 +1,16 @@
 services:
   node: 
     image: node:latest
-    command: sh -c "node install & node app.js" 
+    command: sh -c "npm install && node app.js" 
     ports:
       - 3000:3000
-    working_dir: restaurant-app/
+    working_dir: "/app"
+    volumes:
+      - .:/app
     environment:
-      - MONGO=mongodb://root:pass@mongo:27017/
+      - MONGO=mongodb://admin:pass@mongo:27017/
+    # depends_on:
+      # - mongo
 
   mongo:
     image: mongo
@@ -21,7 +25,7 @@ services:
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: pass
-      ME_CONFIG_MONGODB_URL: mongodb://root:pass@mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://admin:pass@mongo:27017/
   
