@@ -6,7 +6,7 @@ services:
       - 3000:3000
     working_dir: "/app"
     volumes:
-      - .:/app
+      - ./restaurant-app:/app
     environment:
       - MONGO=mongodb://admin:pass@mongo:27017/
     depends_on:
