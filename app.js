@@ -17,7 +17,7 @@ app.use('/', authRouter)
 app.use('/admin', adminRouter)
 
 
-let server = app.listen(3000, 'localhost', () => {
+let server = app.listen(3000, () => {
     port = server.address().port
     host = server.address().hostname
   console.log(`Server running at http://${host}:${port}/`);

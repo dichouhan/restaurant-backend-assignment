@@ -46,6 +46,10 @@ router.post('/login', function(req, res, next){
 
 });
 
+router.get('', function(req, res){
+  res.redirect("/signup")
+})
+
 
 router.get('/signup', function(req, res){
     res.render('auth/signup') 
