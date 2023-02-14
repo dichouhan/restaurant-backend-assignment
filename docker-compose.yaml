@@ -1,0 +1,27 @@
+services:
+  node: 
+    image: node:latest
+    command: sh -c "node install & node app.js" 
+    ports:
+      - 3000:3000
+    working_dir: restaurant-app/
+    environment:
+      - MONGO=mongodb://root:pass@mongo:27017/
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_URL: mongodb://root:pass@mongo:27017/
+  
